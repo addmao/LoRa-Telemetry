@@ -1,0 +1,885 @@
+{
+    "status": "OK",
+    "result": {
+        "result": {
+            "TopBrowserAgent": [
+                {
+                    "value": 4202778,
+                    "key": "Microsoft-Delivery-Optimization/10.0"
+                },
+                {
+                    "value": 1290563,
+                    "key": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
+                },
+                {
+                    "value": 609343,
+                    "key": "Valve/Steam HTTP Client 1.0"
+                },
+                {
+                    "value": 471497,
+                    "key": "Microsoft NCSI"
+                },
+                {
+                    "value": 315805,
+                    "key": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
+                },
+                {
+                    "value": 311848,
+                    "key": "Microsoft-CryptoAPI/10.0"
+                },
+                {
+                    "value": 299458,
+                    "key": "sqlmap/1.2.11.16#dev (http://sqlmap.org)"
+                },
+                {
+                    "value": 285362,
+                    "key": "Mozilla/3.0 (compatible; Indy Library)"
+                },
+                {
+                    "value": 264821,
+                    "key": "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
+                },
+                {
+                    "value": 228365,
+                    "key": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0"
+                },
+                {
+                    "value": 216066,
+                    "key": "Mozilla/5.0 (iPhone; CPU iPhone OS 12_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Mobile/15E148 Safari/604.1"
+                },
+                {
+                    "value": 200076,
+                    "key": "Mozilla/5.0 (compatible; SemrushBot/2~bl; +http://www.semrush.com/bot.html)"
+                },
+                {
+                    "value": 192082,
+                    "key": "VisualOn OSMP+ Player(iOS)"
+                },
+                {
+                    "value": 188325,
+                    "key": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36"
+                },
+                {
+                    "value": 188126,
+                    "key": "Microsoft BITS/7.8"
+                },
+                {
+                    "value": 165253,
+                    "key": "Avast NCC"
+                },
+                {
+                    "value": 143628,
+                    "key": "CaptiveNetworkSupport-355.200.27 wispr"
+                },
+                {
+                    "value": 132462,
+                    "key": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
+                },
+                {
+                    "value": 127395,
+                    "key": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36"
+                },
+                {
+                    "value": 122109,
+                    "key": "Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)"
+                }
+            ],
+            "TopWebUasge": [
+                {
+                    "value": 1351961,
+                    "key": "158.108.110.29"
+                },
+                {
+                    "value": 642637,
+                    "key": "10.40.12.239"
+                },
+                {
+                    "value": 543116,
+                    "key": "62.210.172.42"
+                },
+                {
+                    "value": 207370,
+                    "key": "158.108.207.198"
+                },
+                {
+                    "value": 190108,
+                    "key": "10.34.52.127"
+                },
+                {
+                    "value": 168607,
+                    "key": "10.2.29.187"
+                },
+                {
+                    "value": 145658,
+                    "key": "10.64.37.142"
+                },
+                {
+                    "value": 143761,
+                    "key": "158.108.167.120"
+                },
+                {
+                    "value": 141464,
+                    "key": "158.108.123.39"
+                },
+                {
+                    "value": 118460,
+                    "key": "10.64.65.51"
+                },
+                {
+                    "value": 117947,
+                    "key": "158.108.50.185"
+                },
+                {
+                    "value": 113741,
+                    "key": "158.108.39.183"
+                },
+                {
+                    "value": 95852,
+                    "key": "10.64.40.103"
+                },
+                {
+                    "value": 90030,
+                    "key": "10.40.55.113"
+                },
+                {
+                    "value": 77883,
+                    "key": "10.64.67.141"
+                },
+                {
+                    "value": 76703,
+                    "key": "10.2.11.245"
+                },
+                {
+                    "value": 71546,
+                    "key": "10.2.2.41"
+                },
+                {
+                    "value": 66122,
+                    "key": "158.108.137.118"
+                },
+                {
+                    "value": 65321,
+                    "key": "10.40.45.16"
+                },
+                {
+                    "value": 65290,
+                    "key": "10.64.34.202"
+                }
+            ],
+            "TopWebHost": [
+                {
+                    "value": 3044391,
+                    "key": "android.clients.google.com"
+                },
+                {
+                    "value": 1363991,
+                    "key": "officecdn.microsoft.com"
+                },
+                {
+                    "value": 1262405,
+                    "key": "officecdn.microsoft.com.edgesuite.net"
+                },
+                {
+                    "value": 1161305,
+                    "key": "instantmessaging-pa.googleapis.com"
+                },
+                {
+                    "value": 667523,
+                    "key": "7.tlu.dl.delivery.mp.microsoft.com"
+                },
+                {
+                    "value": 635144,
+                    "key": "play.googleapis.com"
+                },
+                {
+                    "value": 584321,
+                    "key": "sls.update.microsoft.com"
+                },
+                {
+                    "value": 570568,
+                    "key": "www.googleapis.com"
+                },
+                {
+                    "value": 541109,
+                    "key": "graph.facebook.com"
+                },
+                {
+                    "value": 508021,
+                    "key": "mobile.pipe.aria.microsoft.com"
+                },
+                {
+                    "value": 468823,
+                    "key": "159.203.163.203"
+                },
+                {
+                    "value": 431869,
+                    "key": "mtalk.google.com"
+                },
+                {
+                    "value": 404934,
+                    "key": "connectivitycheck.gstatic.com"
+                },
+                {
+                    "value": 359259,
+                    "key": "www.google.com"
+                },
+                {
+                    "value": 339199,
+                    "key": "detectportal.firefox.com"
+                },
+                {
+                    "value": 299110,
+                    "key": "158.108.203.7"
+                },
+                {
+                    "value": 279564,
+                    "key": "update.googleapis.com"
+                },
+                {
+                    "value": 279001,
+                    "key": "158.108.110.29"
+                },
+                {
+                    "value": 259377,
+                    "key": "gws.line.naver.jp"
+                },
+                {
+                    "value": 247257,
+                    "key": "login.live.com"
+                }
+            ],
+            "TopWebServer": [
+                {
+                    "value": 977330,
+                    "key": "159.203.163.203"
+                },
+                {
+                    "value": 883765,
+                    "key": "172.217.194.95"
+                },
+                {
+                    "value": 795119,
+                    "key": "23.208.171.192"
+                },
+                {
+                    "value": 723624,
+                    "key": "13.107.4.50"
+                },
+                {
+                    "value": 626149,
+                    "key": "74.125.24.95"
+                },
+                {
+                    "value": 512988,
+                    "key": "158.108.110.29"
+                },
+                {
+                    "value": 375715,
+                    "key": "23.220.203.19"
+                },
+                {
+                    "value": 362250,
+                    "key": "23.220.203.56"
+                },
+                {
+                    "value": 345559,
+                    "key": "50.62.79.235"
+                },
+                {
+                    "value": 315097,
+                    "key": "23.220.203.42"
+                },
+                {
+                    "value": 309377,
+                    "key": "172.217.194.94"
+                },
+                {
+                    "value": 304276,
+                    "key": "158.108.203.7"
+                },
+                {
+                    "value": 302534,
+                    "key": "157.240.24.20"
+                },
+                {
+                    "value": 294896,
+                    "key": "2a01:111:2003::50"
+                },
+                {
+                    "value": 262707,
+                    "key": "23.220.203.16"
+                },
+                {
+                    "value": 259104,
+                    "key": "111.111.111.111"
+                },
+                {
+                    "value": 248629,
+                    "key": "158.108.196.55"
+                },
+                {
+                    "value": 214819,
+                    "key": "74.125.68.95"
+                },
+                {
+                    "value": 206078,
+                    "key": "2600:1417:2000:185::6bb"
+                },
+                {
+                    "value": 196452,
+                    "key": "172.217.194.138"
+                }
+            ],
+            "IPVertionRatio": [
+                {
+                    "value": 1133925,
+                    "key": "4"
+                },
+                {
+                    "value": 204984,
+                    "key": "6"
+                }
+            ],
+            "TopWebQueryMethod": [
+                {
+                    "value": 958261,
+                    "key": "GET"
+                },
+                {
+                    "value": 237213,
+                    "key": "POST"
+                },
+                {
+                    "value": 29519,
+                    "key": "HEAD"
+                },
+                {
+                    "value": 910,
+                    "key": "PUT"
+                }
+            ],
+            "TopUserUsage": [
+                {
+                    "value": 1352897,
+                    "key": "lib.csc.ku.ac.th"
+                },
+                {
+                    "value": 207357,
+                    "key": "b5820503261@ku.ac.th"
+                },
+                {
+                    "value": 87634,
+                    "key": "b6110505510@ku.ac.th"
+                },
+                {
+                    "value": 78170,
+                    "key": "b5830300877@ku.ac.th"
+                },
+                {
+                    "value": 66709,
+                    "key": "b6110502383@ku.ac.th"
+                },
+                {
+                    "value": 65919,
+                    "key": "b6140201481@ku.ac.th"
+                },
+                {
+                    "value": 59365,
+                    "key": "b5930105227@ku.ac.th"
+                },
+                {
+                    "value": 52592,
+                    "key": "b5811050798@ku.ac.th"
+                },
+                {
+                    "value": 52216,
+                    "key": "maeka.cpe.ku.ac.th"
+                },
+                {
+                    "value": 48756,
+                    "key": "b6130304145@ku.ac.th"
+                },
+                {
+                    "value": 45763,
+                    "key": "b6121650737@ku.ac.th"
+                },
+                {
+                    "value": 45650,
+                    "key": "b6010403391@ku.ac.th"
+                },
+                {
+                    "value": 45084,
+                    "key": "b5930108536@ku.ac.th"
+                },
+                {
+                    "value": 41731,
+                    "key": "b5930166421@ku.ac.th"
+                },
+                {
+                    "value": 41366,
+                    "key": "b6040250887@ku.ac.th"
+                },
+                {
+                    "value": 41106,
+                    "key": "b5940203051@ku.ac.th"
+                },
+                {
+                    "value": 40832,
+                    "key": "b5820500181@ku.ac.th"
+                },
+                {
+                    "value": 40252,
+                    "key": "fengkkt@ku.ac.th"
+                },
+                {
+                    "value": 37006,
+                    "key": "fvetuba@ku.ac.th"
+                },
+                {
+                    "value": 35301,
+                    "key": "b5930161674@ku.ac.th"
+                }
+            ],
+            "TopServerOwner": [
+                {
+                    "value": 547929,
+                    "key": "lib.csc.ku.ac.th"
+                },
+                {
+                    "value": 304252,
+                    "key": "elearning.kus.kps.ku.ac.th"
+                },
+                {
+                    "value": 281172,
+                    "key": "kps.ku.ac.th"
+                },
+                {
+                    "value": 244682,
+                    "key": "mirror1.ku.ac.th"
+                },
+                {
+                    "value": 160851,
+                    "key": "www.ku.ac.th"
+                },
+                {
+                    "value": 95420,
+                    "key": "src.ku.ac.th"
+                },
+                {
+                    "value": 92914,
+                    "key": "pirun.ku.ac.th"
+                },
+                {
+                    "value": 91369,
+                    "key": "esd.psd.kps.ku.ac.th"
+                },
+                {
+                    "value": 86296,
+                    "key": "admission.ku.ac.th"
+                },
+                {
+                    "value": 72490,
+                    "key": "grad.ku.ac.th"
+                },
+                {
+                    "value": 68414,
+                    "key": "www.csc.ku.ac.th"
+                },
+                {
+                    "value": 64225,
+                    "key": "forest.webhost.ku.ac.th"
+                },
+                {
+                    "value": 63920,
+                    "key": "trnkrc@ku.ac.th"
+                },
+                {
+                    "value": 62734,
+                    "key": "v6-2"
+                },
+                {
+                    "value": 59805,
+                    "key": "edu.webhost.ku.ac.th"
+                },
+                {
+                    "value": 59318,
+                    "key": "kulc.lib.ku.ac.th"
+                },
+                {
+                    "value": 49090,
+                    "key": "nontri.ku.ac.th"
+                },
+                {
+                    "value": 48509,
+                    "key": "kuservice.ku.ac.th"
+                },
+                {
+                    "value": 38638,
+                    "key": "misreg.csc"
+                },
+                {
+                    "value": 36470,
+                    "key": "ku3.websec.ku.ac.th"
+                }
+            ],
+            "TopAgentDetaill": [
+                {
+                    "value": 292770,
+                    "key": "Android",
+                    "browser": [
+                        {
+                            "value": 161680,
+                            "key": "Dalvik"
+                        },
+                        {
+                            "value": 120308,
+                            "key": "Chrome"
+                        },
+                        {
+                            "value": 3728,
+                            "key": "Safari"
+                        },
+                        {
+                            "value": 2213,
+                            "key": "Facebook"
+                        },
+                        {
+                            "value": 1154,
+                            "key": "Opera"
+                        }
+                    ]
+                },
+                {
+                    "value": 170266,
+                    "key": "Microsoft Windows",
+                    "browser": [
+                        {
+                            "value": 105692,
+                            "key": "Chrome"
+                        },
+                        {
+                            "value": 24878,
+                            "key": "IE"
+                        },
+                        {
+                            "value": 20547,
+                            "key": "Firefox"
+                        },
+                        {
+                            "value": 8254,
+                            "key": "Edge"
+                        },
+                        {
+                            "value": 5483,
+                            "key": "Opera"
+                        }
+                    ]
+                },
+                {
+                    "value": 74533,
+                    "key": "iPhone",
+                    "browser": [
+                        {
+                            "value": 35995,
+                            "key": "Safari"
+                        },
+                        {
+                            "value": 15313,
+                            "key": "Apple WebKit"
+                        },
+                        {
+                            "value": 6634,
+                            "key": "LINE"
+                        },
+                        {
+                            "value": 5015,
+                            "key": "WeMusic"
+                        },
+                        {
+                            "value": 2751,
+                            "key": "com.apple.appstored"
+                        }
+                    ]
+                },
+                {
+                    "value": 47679,
+                    "key": "Linux",
+                    "browser": [
+                        {
+                            "value": 42098,
+                            "key": "Chrome"
+                        },
+                        {
+                            "value": 3734,
+                            "key": "Firefox"
+                        },
+                        {
+                            "value": 814,
+                            "key": "Wget"
+                        },
+                        {
+                            "value": 356,
+                            "key": "unknown"
+                        },
+                        {
+                            "value": 173,
+                            "key": "Chromium"
+                        }
+                    ]
+                },
+                {
+                    "value": 9520,
+                    "key": "iPad",
+                    "browser": [
+                        {
+                            "value": 4445,
+                            "key": "Safari"
+                        },
+                        {
+                            "value": 1748,
+                            "key": "Apple WebKit"
+                        },
+                        {
+                            "value": 1018,
+                            "key": "LINE"
+                        },
+                        {
+                            "value": 411,
+                            "key": "AppleCoreMedia"
+                        },
+                        {
+                            "value": 391,
+                            "key": "com.apple.appstored"
+                        }
+                    ]
+                },
+                {
+                    "value": 9360,
+                    "key": "Apple Mac",
+                    "browser": [
+                        {
+                            "value": 4162,
+                            "key": "Safari"
+                        },
+                        {
+                            "value": 2517,
+                            "key": "Chrome"
+                        },
+                        {
+                            "value": 1563,
+                            "key": "Apple WebKit"
+                        },
+                        {
+                            "value": 977,
+                            "key": "Firefox"
+                        },
+                        {
+                            "value": 55,
+                            "key": "iTunes"
+                        }
+                    ]
+                },
+                {
+                    "value": 1362,
+                    "key": "Curl",
+                    "browser": [
+                        {
+                            "value": 1124,
+                            "key": "curl"
+                        },
+                        {
+                            "value": 198,
+                            "key": "PycURL"
+                        },
+                        {
+                            "value": 20,
+                            "key": "libcurl"
+                        },
+                        {
+                            "value": 13,
+                            "key": "UnityPlayer"
+                        },
+                        {
+                            "value": 5,
+                            "key": "unknown"
+                        }
+                    ]
+                },
+                {
+                    "value": 400,
+                    "key": "iPod",
+                    "browser": [
+                        {
+                            "value": 345,
+                            "key": "unknown"
+                        },
+                        {
+                            "value": 36,
+                            "key": "WeMusic"
+                        },
+                        {
+                            "value": 7,
+                            "key": "Apple WebKit"
+                        },
+                        {
+                            "value": 4,
+                            "key": "Safari"
+                        },
+                        {
+                            "value": 3,
+                            "key": "AppleCoreMedia"
+                        }
+                    ]
+                },
+                {
+                    "value": 9,
+                    "key": "Apple iOS",
+                    "browser": [
+                        {
+                            "value": 9,
+                            "key": "iOS-188Asia"
+                        }
+                    ]
+                },
+                {
+                    "value": 9,
+                    "key": "Wii",
+                    "browser": [
+                        {
+                            "value": 8,
+                            "key": "unknown"
+                        },
+                        {
+                            "value": 1,
+                            "key": "Opera"
+                        }
+                    ]
+                }
+            ],
+            "TopBrowser": [
+                {
+                    "value": 272944,
+                    "key": "Chrome"
+                },
+                {
+                    "value": 161680,
+                    "key": "Dalvik"
+                },
+                {
+                    "value": 49048,
+                    "key": "Safari"
+                },
+                {
+                    "value": 25286,
+                    "key": "Firefox"
+                },
+                {
+                    "value": 24883,
+                    "key": "IE"
+                },
+                {
+                    "value": 21322,
+                    "key": "Apple WebKit"
+                },
+                {
+                    "value": 8260,
+                    "key": "Edge"
+                },
+                {
+                    "value": 7653,
+                    "key": "LINE"
+                },
+                {
+                    "value": 6728,
+                    "key": "Opera"
+                },
+                {
+                    "value": 5330,
+                    "key": "WeMusic"
+                },
+                {
+                    "value": 4786,
+                    "key": "unknown"
+                },
+                {
+                    "value": 3673,
+                    "key": "Facebook"
+                },
+                {
+                    "value": 3143,
+                    "key": "com.apple.appstored"
+                },
+                {
+                    "value": 1993,
+                    "key": "AppleCoreMedia"
+                },
+                {
+                    "value": 1124,
+                    "key": "curl"
+                },
+                {
+                    "value": 1014,
+                    "key": "com.ss.android.ugc.trill"
+                },
+                {
+                    "value": 873,
+                    "key": "itunesstored"
+                },
+                {
+                    "value": 814,
+                    "key": "Wget"
+                },
+                {
+                    "value": 756,
+                    "key": "Spotify"
+                },
+                {
+                    "value": 378,
+                    "key": "AndroidDownloadManager"
+                }
+            ],
+            "TopClientOS": [
+                {
+                    "value": 292770,
+                    "key": "Android"
+                },
+                {
+                    "value": 170266,
+                    "key": "Microsoft Windows"
+                },
+                {
+                    "value": 74533,
+                    "key": "iPhone"
+                },
+                {
+                    "value": 47679,
+                    "key": "Linux"
+                },
+                {
+                    "value": 9520,
+                    "key": "iPad"
+                },
+                {
+                    "value": 9360,
+                    "key": "Apple Mac"
+                },
+                {
+                    "value": 1362,
+                    "key": "Curl"
+                },
+                {
+                    "value": 400,
+                    "key": "iPod"
+                },
+                {
+                    "value": 9,
+                    "key": "Apple iOS"
+                },
+                {
+                    "value": 9,
+                    "key": "Wii"
+                }
+            ]
+        }
+    }
+}
