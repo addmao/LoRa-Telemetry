@@ -16,7 +16,7 @@ import { LayoutModule } from 'angular-admin-lte';
 import { AreaComponent } from './admin/graph/area/area.component';
 import { DonutComponent } from './admin/graph/donut/donut.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { BarComponent } from './admin/graph/bar/bar.component';
+import { BarComponentEnv, BarComponentWater } from './admin/graph/bar/bar.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
 
 import {MatButtonModule, MatIconModule} from '@angular/material';
@@ -27,7 +27,8 @@ import {MatButtonModule, MatIconModule} from '@angular/material';
     DashboardComponent,
     AreaComponent,
     DonutComponent,
-    BarComponent,
+    BarComponentEnv,
+    BarComponentWater,
   ],
   imports: [
     BrowserModule,
