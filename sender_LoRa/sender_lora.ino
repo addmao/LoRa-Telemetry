@@ -48,8 +48,7 @@
 #define POWER_PIN -1       // The sensor power pin (or -1 if not switching power)
 
 //DHT definition
-#define dataPin 8
-#define DHTPIN 13    // Digital pin connected to the DHT sensor
+#define DHTPIN 12    // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT22
 
 // Define the SDI-12 bus
@@ -136,6 +135,11 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
+void looptest() {
+  sendWaterLeveltoLoRa(500);
+  delay(5000);
+}
+
 void loop() {
   //  readSDI12Sensor();
   //  readDHT();
@@ -193,7 +197,7 @@ void sendWaterLeveltoLoRa(uint16_t level) {
   Serial.print("Sending Water Level: ");
   Serial.println(sensorData.level);
   Serial.print("Sending DHT data: Temp Humid ");
-  Serial.print(sensorData.temperature);b 
+  Serial.print(sensorData.temperature);
   Serial.print(" ");
   Serial.println(sensorData.humidity);
 
