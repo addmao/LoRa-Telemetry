@@ -128,7 +128,7 @@ void setup() {
       0xc4, // Reg 0x1E: Spread=4096chips/symbol, CRC=enable
       0x0c  // Reg 0x26: Mobile=On, Agc=On
     };
-  //  rf95.setModemRegisters(&modem_config);
+    rf95.setModemRegisters(&modem_config);
 
   //rf95.setModemConfig(RH_RF95::Bw31_25Cr48Sf512);
   Serial.begin(SERIAL_BAUD);
