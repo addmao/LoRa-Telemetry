@@ -6,23 +6,10 @@ var mysql = require('mysql');
 var conn = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
-	password: 'zazaza123',
+	password: '********',
 	database: 'water_level',
 	insecureAuth: true
 });
-
-
-//var server = app.listen(8080, function(req, res) {
-//	console.log('Creating http server');
-//	//console.log(err);
-//	conn.query('SELECT * FROM monitoring_system', [1,2], function(err,rows,fields){
-//		res.set({'Content-Type': 'application/json'});
-//		console.log(err);
-//		//console.log(rows);
-//		res.end(JSON.stringify(rows));
-//		res.end();
-//	})
-//})
 
 console.log('MySQL connection details ' + conn);
 
