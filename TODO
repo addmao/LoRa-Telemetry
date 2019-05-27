@@ -1,0 +1,7 @@
+27 May 2019
+1) Design circuit on PCB.
+2) Edit software part which can read all 3 values from pressure probe ( water level, temperature of water, voltage of probe).
+3) Officer can reconfig LoRa sender via web interface.
+4) Change timezone of displaying data to GMT+7.
+5) Officer can change delay time for sending data.
+6) Add watchdog part to control system when unexpected event occurs.
