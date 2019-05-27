@@ -77,9 +77,11 @@ RH_RF95 rf95_driver(RFM95_CS, RFM95_INT);
 #define LED 13
 
 struct dataStruct{
-  uint16_t level;
-  uint16_t temperature;
-  uint16_t humidity;
+  uint16_t water_level;
+  uint16_t temperature_box;
+  //uint16_t humidity;
+  uint16_t temperature_water;
+  uint16_t voltage_probe;
 } receiveData;
 
 
@@ -89,7 +91,7 @@ void setup()
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   while (!Serial) {
     //delay(1);
   }
@@ -144,39 +146,22 @@ void loop()
 //      delay(500);
 
       memcpy(&receiveData, buf, len);
-      //Serial.print(receiveData.temperature);
-      Serial.print(receiveData.temperature);
-      Serial.print(",");
-      Serial.print(receiveData.humidity);
-      Serial.print(",");
-      Serial.print(rf95_driver.lastRssi(), DEC);
-      Serial.print(",");
-      Serial.println(receiveData.level);
 
-      //RH_RF95::printBuffer("Received: ", buf, len);
-      //Serial.print("Water Level: ");
-//      if(len == 8) {
-//        //DHT
-//        //Serial.println("DHT");
-//        float* dht_data_receive = (float*)buf;
-//        Serial.print(dht_data_receive[0]);//Temperature
-//        Serial.print(",");
-//        Serial.print(dht_data_receive[1]);//Humidity
-//        Serial.print(",");
-//        Serial.print(rf95_driver.lastRssi(), DEC);
-//        Serial.print(",");
-//      }
-//
-//      else if(len == 20) {
-//        //WATER_LEVEL
-//        //Serial.println("WATER");
-//        char* water_level_data_receive = (char*)buf;
-//        Serial.println(water_level_data_receive);
-//        //Serial.print(",");
-//      }
+      Serial.print(receiveData.temperature_box); // Box Temperature
+      Serial.print(",");
+      //Serial.print(receiveData.humidity); // Box Humidity
       //Serial.print(",");
-      //Serial.print("RSSI: ");
-      //Serial.println(rf95.lastRssi(), DEC);
+      Serial.print(rf95_driver.lastRssi(), DEC); // RSSI
+      Serial.print(",");
+      Serial.print(rf95_driver.lastSNR()); // SNR
+      Serial.print(",");
+      Serial.print(receiveData.water_level); // Water Level
+      Serial.print(",");
+      Serial.print(receiveData.temperature_water);
+      Serial.print(",");
+      Serial.print(receiveData.voltage_probe);
+      Serial.print(",");
+      
 
       // Send a reply
       rf95_driver.send(data_ack, sizeof(data_ack));
@@ -189,5 +174,4 @@ void loop()
       Serial.println("Receive failed");
     }
   }
-  //Serial.flush();
 }
