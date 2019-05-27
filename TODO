@@ -5,3 +5,5 @@
 4) Change timezone of displaying data to GMT+7.
 5) Officer can change delay time for sending data.
 6) Add watchdog part to control system when unexpected event occurs.
+7) Officer can monitor battery status.
+8) Add data graph
