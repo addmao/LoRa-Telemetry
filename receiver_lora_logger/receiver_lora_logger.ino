@@ -1,7 +1,6 @@
-#include <SPI.h>
+#include <Adafruit_SleepyDog.h>
 #include <RH_RF95.h>
 #include <SDI12.h>
-#include <SDI12_boards.h>
 
 #include "pt/pt.h"
 
@@ -129,6 +128,8 @@ void setup()
   PT_INIT(&ptRadio);
   PT_INIT(&ptSdi);
   PT_INIT(&ptTimer);
+
+  Watchdog.enable(WATCHDOG_TIMEOUT);
 }
 
 /*****************************************/
@@ -137,6 +138,7 @@ void loop()
   taskRadio(&ptRadio);
   taskSdi(&ptSdi);
   taskTimer(&ptTimer);
+  Watchdog.reset();
 }
 
 /*****************************************/
@@ -153,6 +155,7 @@ PT_THREAD(taskRadio(struct pt* pt)) {
     
     if (rf95.recv(buf,&len)) {
       if (len == sizeof(sensorData)) {
+        DEBUG_PRINTLN("Radio data received.");
         memcpy(&sensorData,buf,len);
         SHORT_BLINK(50,100);
         SHORT_BLINK(50,0);
