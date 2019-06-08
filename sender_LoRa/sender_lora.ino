@@ -52,7 +52,7 @@
 #define DHTTYPE DHT22
 
 // Define the SDI-12 bus
-SDI12 sdi12_conn(DATA_PIN);
+SDI12 sdi12Con(DATA_PIN);
 
 // Define DHT type
 DHT dht(DHTPIN, DHTTYPE);
@@ -60,40 +60,40 @@ DHT dht(DHTPIN, DHTTYPE);
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
-char sdi12_data;
-char sdi12_data_array[128];
-uint8_t sdiBufPtr;
-int16_t index = 0;
-int16_t i = 0;
-
-struct dataStruct {
-  uint16_t level;
-  uint16_t temperature;
-  uint16_t humidity;
+struct dataStruct{
+  uint16_t water_level;
+  uint16_t temperature_box;
+  //uint16_t humidity;
+  uint16_t temperature_water;
+  uint16_t voltage_probe;
 } sensorData;
 
 byte sender_data[sizeof(sensorData)] = {0};
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
+  uint32_t ts = millis();
+  while (!Serial) {
+    if (millis() - ts > 10000) break;
+  }
   digitalWrite(LED_BUILTIN, LOW);
   
   dht.begin();
   
   //Begin SDI12 connection
-  sdi12_conn.begin();
+  sdi12Con.begin();
   delay(500);
-  sdi12_conn.forceListen();
 
   //Begin LoRa communication
   pinMode(RFM95_RST, OUTPUT);
   digitalWrite(RFM95_RST, HIGH);
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   //while (!Serial);
   delay(100);
 
-  Serial.println("Feather LoRa TX Test!");
+  Serial.println("RID Y.20 LoRa Link");
 
   // manual reset
   digitalWrite(RFM95_RST, LOW);
@@ -128,100 +128,111 @@ void setup() {
       0xc4, // Reg 0x1E: Spread=4096chips/symbol, CRC=enable
       0x0c  // Reg 0x26: Mobile=On, Agc=On
     };
-  //  rf95.setModemRegisters(&modem_config);
+  rf95.setModemRegisters(&modem_config);
 
   //rf95.setModemConfig(RH_RF95::Bw31_25Cr48Sf512);
   Serial.begin(SERIAL_BAUD);
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
-void looptest() {
-  sendWaterLeveltoLoRa(500);
+void loop() {
+  sendWaterLeveltoLoRa(500, 24, 13);
   delay(5000);
 }
 
-void loop() {
-  //  readSDI12Sensor();
-  //  readDHT();
-  //  sendDataToLoRa();
-  //sendWaterLeveltoLoRa(121);
-
-  int sdi12Available = sdi12_conn.available();
-  if (sdi12Available < 0) {
-    sdi12_conn.clearBuffer();
-  }
-
-  else if (sdi12Available > 0) {
-    for (int a = 0; a < sdi12Available; a++) {
-      sdi12_data = sdi12_conn.read();
-      index++;
-      if (index > 7 && sdi12_data != '\n') {
-        sdi12_data_array[i] = sdi12_data;
-        i++;
-      }
-      //      Serial.print("Index: ");
-      //      Serial.println(index);
-      //      Serial.print("i: ");
-      //      Serial.println(i);
-
-      if (index - i == 8) {
-        sendWaterLeveltoLoRa(atoi(sdi12_data_array));
-        delay(1000);
-      }
-
-      if (index - i >= 8) {
-        index = 0;
-        i = 0;
-      }
+uint8_t sdi12read(const char* command, char *response) {
+  uint8_t index = 0;
+  sdi12Con.sendCommand(command);
+  delay(30);
+  while (sdi12Con.available()) {
+    char c = sdi12Con.read();
+    if ((c!='\n') && (c!='\r')) {
+      response[index++] = c;
+      delay(10);
     }
   }
+  response[index] = 0;
+  return index;
 }
 
-bool sendWater = false;
+float extractFirst(char* response) {
+  // find the first + or -. If not found, return 0
+  uint8_t i = 0;
+  char *p;
 
-void sendWaterLeveltoLoRa(uint16_t level) {
-  //char* waterLevel_radiopacket;
-  //float dht_radiopacket[2];
-  //dht_radiopacket[0] = dht.readTemperature();
-  //dht_radiopacket[1] = dht.readHumidity();
-  //waterLevel_radiopacket = data;
-  //SensorData sensorData;
+  while (1) {
+    char c = response[i++];
+    if ((c == '+') || (c == '-'))
+      break;
+    else if (c == 0)
+      return NAN;
+  }
+  p = response + i;
 
-  sensorData.temperature = (uint16_t)dht.readTemperature();
-  sensorData.humidity = (uint16_t)dht.readHumidity();
-  sensorData.level = level;
+  // find the next + or - or the end of string
+  while (1) {
+    char c = response[i];
+    if ((c == '+') || (c == '-') || (c == 0)) {
+      response[i] = 0;
+      break;
+    }
+    i++;
+  }
+  return atof(p);
+}
 
-  Serial.print("Data from SDI-12: ");
-  Serial.println(sensorData.level);
+void looptest() {
+  char response[128];
+  uint8_t len;
 
+  Serial.println("SDI12: start measurement");
+  len = sdi12read("0M!",response);
+  if (len > 1) {
+    Serial.print("SDI12: response ");
+    Serial.println(response);
+  }
+
+  delay(2000);
+  Serial.println("SDI12: read measurement");
+  len = sdi12read("0D0!",response);
+  if (len > 1) {
+    Serial.print("SDI12: response ");
+    Serial.println(response);
+    Serial.print("Extracted value: ");
+    float value = extractFirst(response);
+    Serial.println(value,4);
+    //sendWaterLeveltoLoRa((int)round(value*1000));
+  }
+
+  delay(10000);
+}
+
+void sendWaterLeveltoLoRa(uint16_t water_level, 
+                          uint16_t temperature_water,
+                          uint16_t voltage_probe) {
+  
+  sensorData.water_level = water_level;
+  sensorData.temperature_box = (uint16_t)dht.readTemperature();
+  //sensorData.humidity = (uint16_t)dht.readHumidity();
+  sensorData.temperature_water = temperature_water;
+  sensorData.voltage_probe = voltage_probe;
+
+  Serial.print("Water Level Data from SDI-12: ");
+  Serial.println(sensorData.water_level);
   Serial.print("Sending Water Level: ");
-  Serial.println(sensorData.level);
-  Serial.print("Sending DHT data: Temp Humid ");
-  Serial.print(sensorData.temperature);
-  Serial.print(" ");
-  Serial.println(sensorData.humidity);
+  Serial.println(sensorData.water_level);
+  Serial.print("Sending Water Temperature: ");
+  Serial.println(sensorData.temperature_water);
+  Serial.print("Sending Voltage Probe: ");
+  Serial.println(sensorData.voltage_probe);
+  Serial.print("Sending DHT data: Temp");
+  Serial.print(sensorData.temperature_box);
+  //Serial.print(" ");
+  //Serial.println(sensorData.humidity);
 
   digitalWrite(LED_BUILTIN, HIGH);
   delay(50);
   digitalWrite(LED_BUILTIN, LOW);
 
   rf95.send((uint8_t*)&sensorData, sizeof(sensorData));
-  uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-  uint8_t len = sizeof(buf);
-
-  Serial.println("Waiting for water level complete reply...");
-  if (rf95.waitAvailableTimeout(5000)) {
-    if (rf95.recv(buf, &len)) {
-      Serial.print("Got reply: ");
-      Serial.println((char*)buf);
-      Serial.print("RSSI: ");
-      Serial.println(rf95.lastRssi(), DEC);
-    }
-    else {
-      Serial.println("Receive failed");
-    }
-  }
-  else {
-    Serial.println("No reply from another side, is there a listener around?");
-  }
 }
