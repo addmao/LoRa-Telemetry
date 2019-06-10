@@ -6,7 +6,6 @@
 // level messaging abilities.
 // It is designed to work with the other example Feather9x_TX
 
-#include <RHReliableDatagram.h>
 #include <SPI.h>
 #include <RH_RF95.h>
 
@@ -145,7 +144,7 @@ void loop()
 
       Serial.print(receiveData.air_temp); // Box Temperature
       Serial.print(",");
-      Serial.print(receiveData.humidity); // Box Humidity
+      Serial.print(receiveData.humidity/1000); // Box Humidity
       Serial.print(",");
       Serial.print(rf95_driver.lastRssi(), DEC); // RSSI
       Serial.print(",");
@@ -153,7 +152,7 @@ void loop()
       Serial.print(",");
       Serial.print(receiveData.level); // Water Level
       Serial.print(",");
-      Serial.print(receiveData.water_temp);
+      Serial.print(receiveData.water_temp/1000);
       Serial.print(",");
       Serial.print(receiveData.voltage);
       Serial.print(",");
