@@ -77,11 +77,12 @@ RH_RF95 rf95_driver(RFM95_CS, RFM95_INT);
 #define LED 13
 
 struct dataStruct{
-  uint16_t water_level;
-  uint16_t temperature_box;
-  //uint16_t humidity;
-  uint16_t temperature_water;
-  uint16_t voltage_probe;
+  uint16_t checkingField; //MAGIC FIELD
+  uint16_t level;
+  uint16_t air_temp;
+  uint16_t humidity;
+  uint16_t water_temp;
+  uint16_t voltage;
 } receiveData;
 
 
@@ -127,8 +128,6 @@ void setup()
 //rf95_driver.setModemConfig(RH_RF95::Bw125Cr48Sf4096);
 }
 
-uint8_t data_ack[] = "Received package";
-
 void loop()
 {
   if (rf95_driver.available())
@@ -138,35 +137,27 @@ void loop()
     uint8_t len = sizeof(buf);
     uint8_t from;
 
-    if (rf95_driver.recv(buf, &len))
+    if (rf95_driver.recv(buf, &len) && receiveData.checkingField == 100)
     {
       digitalWrite(LED, HIGH);
-//      delay(500);
-//      digitalWrite(LED, LOW);
-//      delay(500);
 
       memcpy(&receiveData, buf, len);
 
-      Serial.print(receiveData.temperature_box); // Box Temperature
+      Serial.print(receiveData.air_temp); // Box Temperature
       Serial.print(",");
-      //Serial.print(receiveData.humidity); // Box Humidity
-      //Serial.print(",");
+      Serial.print(receiveData.humidity); // Box Humidity
+      Serial.print(",");
       Serial.print(rf95_driver.lastRssi(), DEC); // RSSI
       Serial.print(",");
       Serial.print(rf95_driver.lastSNR()); // SNR
       Serial.print(",");
-      Serial.print(receiveData.water_level); // Water Level
+      Serial.print(receiveData.level); // Water Level
       Serial.print(",");
-      Serial.print(receiveData.temperature_water);
+      Serial.print(receiveData.water_temp);
       Serial.print(",");
-      Serial.print(receiveData.voltage_probe);
+      Serial.print(receiveData.voltage);
       Serial.print(",");
       
-
-      // Send a reply
-      rf95_driver.send(data_ack, sizeof(data_ack));
-      rf95_driver.waitPacketSent();
-      //Serial.println("Sent a reply");
       digitalWrite(LED, LOW);
     }
     else
