@@ -61,9 +61,12 @@ DHT dht(DHTPIN, DHTTYPE);
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
 struct dataStruct {
+  uint16_t checkingField; //MAGIC FIELD
   uint16_t level;
-  uint16_t temperature;
+  uint16_t air_temp;
   uint16_t humidity;
+  uint16_t water_temp;
+  uint16_t voltage;
 } sensorData;
 
 byte sender_data[sizeof(sensorData)] = {0};
@@ -105,9 +108,7 @@ void setup() {
   }
 
   Serial.println("LoRa radio init OK!");
-
-  // Defaults after init are 434.0MHz, modulation GFSK_Rb250Fd250, +13dbM
-  // rf95_driver.setFrequency(RF95_FREQ)
+  
   if (!rf95.setFrequency(RF95_FREQ)) {
     Serial.println("setFrequency failed");
     while (1);
@@ -133,9 +134,9 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
-void looptest() {
-  sendWaterLeveltoLoRa(500);
-  delay(5000);
+void loop() {
+  sendWaterLeveltoLoRa(500, 24, 13);
+  delay(10000);
 }
 
 uint8_t sdi12read(const char* command, char *response) {
@@ -179,7 +180,7 @@ float extractFirst(char* response) {
   return atof(p);
 }
 
-void loop() {
+void looptest() {
   char response[128];
   uint8_t len;
 
@@ -199,26 +200,35 @@ void loop() {
     Serial.print("Extracted value: ");
     float value = extractFirst(response);
     Serial.println(value,4);
-    sendWaterLeveltoLoRa((int)round(value*1000));
+    //sendWaterLeveltoLoRa((int)round(value*1000));
   }
 
   delay(10000);
 }
 
-void sendWaterLeveltoLoRa(uint16_t level) {
-  sensorData.temperature = (uint16_t)dht.readTemperature();
-  sensorData.humidity = (uint16_t)dht.readHumidity();
-  sensorData.level = level;
+void sendWaterLeveltoLoRa(uint16_t level, 
+                          uint16_t water_temp,
+                          uint16_t voltage) {
+  sensorData.checkingField = 100;
+  sensorData.water_level = level;
+  sensorData.air_temp = dht.readTemperature()*1000;
+  sensorData.humidity = dht.readHumidity()*1000;
+  sensorData.water_temp = water_temp;
+  sensorData.voltage = voltage;
 
-  Serial.print("Data from SDI-12: ");
-  Serial.println(sensorData.level);
-
+  Serial.print("Checking Field: ");
+  Serial.println(sensorData.checkingField);
+  
   Serial.print("Sending Water Level: ");
-  Serial.println(sensorData.level);
-  Serial.print("Sending DHT data: Temp Humid ");
-  Serial.print(sensorData.temperature);
-  Serial.print(" ");
-  Serial.println(sensorData.humidity);
+  Serial.println(sensorData.water_level);
+  Serial.print("Sending Water Temperature: ");
+  Serial.println(sensorData.water_temp);
+  Serial.print("Sending Air Temperature: ");
+  Serial.print(sensorData.air_temp);
+  Serial.print("Sending Air Humidity: ");
+  Serial.print(sensorData.humidity);
+  Serial.print("Sending Voltage Probe: ");
+  Serial.println(sensorData.voltage);
 
   digitalWrite(LED_BUILTIN, HIGH);
   delay(50);
