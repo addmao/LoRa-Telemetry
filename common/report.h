@@ -2,6 +2,7 @@
 #define __REPORT_H__
 
 struct SensorData {
+  uint16_t checkingField;
   uint16_t level;
   uint16_t air_temp;
   uint16_t humidity;
