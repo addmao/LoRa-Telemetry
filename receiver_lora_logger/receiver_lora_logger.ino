@@ -2,6 +2,7 @@
 #include <RH_RF95.h>
 #include <SDI12.h>
 
+#include "report.h"
 #include "pt/pt.h"
 
 #define DEBUG
@@ -47,14 +48,6 @@
 #define PT_DELAY(pt,ms,tsVar) \
   tsVar = millis(); \
   PT_WAIT_UNTIL(pt, millis()-tsVar >= (ms));
-
-struct SensorData {
-  uint16_t level;
-  uint16_t air_temp;
-  uint16_t humidity;
-  uint16_t water_temp;
-  uint16_t voltage;
-};
 
 RH_RF95 rf95(PIN_RFM95_CS,PIN_RFM95_INT);
 SDI12 sdi12Con(PIN_DATA);
