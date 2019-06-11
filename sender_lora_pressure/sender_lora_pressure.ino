@@ -1,3 +1,5 @@
+#include <Adafruit_SleepyDog.h>
+
 #include <SPI.h>
 #include <RH_RF95.h>
 
@@ -6,6 +8,8 @@
 #include <DHT.h>
 #include <DHT_U.h>
 #include <string.h>
+
+#include "report.h"
 
 //BEGIN RADIO PART
 /* for feather32u4 */
@@ -50,6 +54,8 @@
 //DHT definition
 #define DHTPIN 12    // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT22
+
+#define WATCHDOG_TIMEOUT  (10*1000)
 
 // Define the SDI-12 bus
 SDI12 sdi12Con(DATA_PIN);
@@ -132,11 +138,13 @@ void setup() {
   //rf95.setModemConfig(RH_RF95::Bw31_25Cr48Sf512);
   Serial.begin(SERIAL_BAUD);
   pinMode(LED_BUILTIN, OUTPUT);
+  Watchdog.enable(WATCHDOG_TIMEOUT);
 }
 
 void loop() {
   sendWaterLeveltoLoRa(500, 24, 13);
   delay(10000);
+  Watchdog.reset();
 }
 
 uint8_t sdi12read(const char* command, char *response) {
@@ -210,7 +218,7 @@ void sendWaterLeveltoLoRa(uint16_t level,
                           uint16_t water_temp,
                           uint16_t voltage) {
   sensorData.checkingField = 100;
-  sensorData.water_level = level;
+  sensorData.level = level;
   sensorData.air_temp = dht.readTemperature()*1000;
   sensorData.humidity = dht.readHumidity()*1000;
   sensorData.water_temp = water_temp;
@@ -220,7 +228,7 @@ void sendWaterLeveltoLoRa(uint16_t level,
   Serial.println(sensorData.checkingField);
   
   Serial.print("Sending Water Level: ");
-  Serial.println(sensorData.water_level);
+  Serial.println(sensorData.level);
   Serial.print("Sending Water Temperature: ");
   Serial.println(sensorData.water_temp);
   Serial.print("Sending Air Temperature: ");
