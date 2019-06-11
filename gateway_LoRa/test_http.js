@@ -8,7 +8,8 @@ var conn = mysql.createConnection({
 	user: 'root',
 	password: '********',
 	database: 'water_level',
-	insecureAuth: true
+	insecureAuth: true,
+	timezone: 'GMT+7'
 });
 
 console.log('MySQL connection details ' + conn);
