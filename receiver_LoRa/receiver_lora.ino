@@ -8,6 +8,8 @@
 
 #include <SPI.h>
 #include <RH_RF95.h>
+#include <Adafruit_SleepyDog.h>
+#include "report.h"
 
 /* for Feather32u4 RFM9x
 #define RFM95_CS 8
@@ -125,6 +127,7 @@ void setup()
   };
   rf95_driver.setModemRegisters(&modem_config);
 //rf95_driver.setModemConfig(RH_RF95::Bw125Cr48Sf4096);
+  Watchdog.enable(WATCHDOG_TIMEOUT);
 }
 
 void loop()
@@ -134,7 +137,6 @@ void loop()
     // Should be a message for us now
     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
     uint8_t len = sizeof(buf);
-    uint8_t from;
 
     if (rf95_driver.recv(buf, &len) && receiveData.checkingField == 100)
     {
@@ -164,4 +166,5 @@ void loop()
       Serial.println("Receive failed");
     }
   }
+  Watchdog.reset();
 }
