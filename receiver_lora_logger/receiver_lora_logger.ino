@@ -2,8 +2,11 @@
 #include <RH_RF95.h>
 #include <SDI12.h>
 
-#include "report.h"
 #include "pt/pt.h"
+
+#include "pins.h"
+#include "radio.h"
+#include "packets.h"
 
 #define DEBUG
 #define WATCHDOG_TIMEOUT  (10*1000)   // msec
@@ -17,25 +20,9 @@
 #define DEBUG_PRINTLN(x...)
 #endif
 
-#define PIN_LED   LED_BUILTIN
-#define PIN_DATA  11
-
-/* for Feather32u4 RFM9x */
-#define PIN_RFM95_CS  8
-#define PIN_RFM95_RST 4
-#define PIN_RFM95_INT 7
-
-/*for Feather M0 RFM9x
-#define PIN_RFM95_CS 8
-#define PIN_RFM95_RST 4
-#define PIN_RFM95_INT 3
-*/
-
 #define SDI12_ADDR     "0"
 #define SDI12_DELAY    2
 #define SDI12_NUM_RESP 3
-
-#define RF95_FREQ 434.0
 
 #define SHORT_BLINK(on,off) \
         do { \
@@ -51,7 +38,7 @@
 
 RH_RF95 rf95(PIN_RFM95_CS,PIN_RFM95_INT);
 SDI12 sdi12Con(PIN_DATA);
-SensorData sensorData;
+PacketData packetData;
 bool data_available;
 uint32_t lastReceived;
 struct pt ptRadio;
@@ -80,38 +67,17 @@ void setup()
   DEBUG_PRINTLN(F("receiver starting up..."));
 #endif
 
-  memset(&sensorData,0,sizeof(sensorData));
+  memset(&packetData,0,sizeof(packetData));
   data_available = false;
   lastReceived = 0;
 
-  // manual reset
-  // should RST be left floating (per datasheet)?
-  digitalWrite(PIN_RFM95_RST,LOW);
-  pinMode(PIN_RFM95_RST,OUTPUT);
-  delay(1);
-  pinMode(PIN_RFM95_RST,INPUT);
-  delay(10);
-
-  while (!rf95.init()) {
-    DEBUG_PRINTLN("LoRa radio init failed");
+  if (radioInit(rf95)) {
+    DEBUG_PRINTLN("Radio init successful.");
+  }
+  else {
+    DEBUG_PRINTLN("Radio init failed.");
     error_blink_loop(1);
   }
-
-  if (!rf95.setFrequency(RF95_FREQ)) {
-    DEBUG_PRINTLN("LoRa radio set frequency failed");
-    error_blink_loop(2);
-  }
-
-  rf95.setTxPower(23,false);
-  RH_RF95::ModemConfig modem_config = {
-      // See Table 86 for LoRa for more info
-      0x78, // Reg 0x1d: BW=125kHz, Coding=4/8, Header=explicit
-      0xc4, // Reg 0x1e: Spread=4096chips/symbol, CRC=enable
-      0x0c  // Reg 0x26: Mobile=On, Agc=On
-    };
-  rf95.setModemRegisters(&modem_config);
-
-  DEBUG_PRINTLN("Radio initialized.");
 
   sdi12Con.begin();
   delay(500);
@@ -147,9 +113,10 @@ PT_THREAD(taskRadio(struct pt* pt)) {
     uint8_t len = sizeof(buf);
     
     if (rf95.recv(buf,&len)) {
-      if (len == sizeof(sensorData)) {
+      PacketHeader* header = (PacketHeader*)buf;
+      if (header == PACKET_TYPE_DATA && len == sizeof(PacketData)) {
         DEBUG_PRINTLN("Radio data received.");
-        memcpy(&sensorData,buf,len);
+        memcpy(&packetData,buf,len);
         SHORT_BLINK(50,100);
         SHORT_BLINK(50,0);
         lastReceived = millis();
@@ -197,9 +164,15 @@ PT_THREAD(taskSdi(struct pt* pt)) {
     }
 
     // XXX for testing
-    //sensorData.level = 1800;
-    //sensorData.voltage = 124;
-    //sensorData.water_temp = 321;
+    //packetData.level = 1856;
+    //packetData.voltage = 124;
+    //packetData.water_temp = 123;
+    //
+    // Water level displayed on StarLogV4:
+    // 756 -> -30.401
+    // 1756 -> -15.201
+    // 1800 -> 26.217
+    // 1856 -> -28.309
 
     if (!strcmp(sdibuf,SDI12_ADDR "M")) {
       sprintf(response,SDI12_ADDR "%03d%d\r\n",
@@ -213,12 +186,12 @@ PT_THREAD(taskSdi(struct pt* pt)) {
     }
     else if (!strcmp(sdibuf,SDI12_ADDR "D0")) {
       sprintf(response,SDI12_ADDR "+%d.%03d+%d.%d+%d.%d\r\n",
-        sensorData.level/1000,
-        sensorData.level%1000,
-        sensorData.water_temp/10,
-        sensorData.water_temp%10,
-        sensorData.voltage/10,
-        sensorData.voltage%10);
+        packetData.level/1000,
+        packetData.level%1000,
+        packetData.water_temp/10,
+        packetData.water_temp%10,
+        packetData.voltage/10,
+        packetData.voltage%10);
       DEBUG_PRINT("Sending response: ");
       DEBUG_PRINTLN(response);
       sdi12Con.sendResponse(response);
@@ -239,8 +212,8 @@ PT_THREAD(taskTimer(struct pt* pt)) {
   for (;;) {
     // TODO: take care of wrap-around
     if (data_available && (uint32_t)(millis()-lastReceived) >= DATA_TIMEOUT) {
-      memset(&sensorData,0,sizeof(sensorData));
-      DEBUG_PRINTLN("Radio reception timed out; clear sensor data");
+      DEBUG_PRINTLN("Radio reception timed out");
+      data_available = false;
     }
     PT_DELAY(pt,5000,ts);
   }
