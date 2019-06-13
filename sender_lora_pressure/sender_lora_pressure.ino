@@ -32,7 +32,7 @@ DHT dht(DHTPIN, DHTTYPE);
 
 // Singleton instance of the radio driver
 
-RH_RF95 rf95(RFM95_CS, RFM95_INT);
+RH_RF95 rf95(PIN_RFM95_CS, PIN_RFM95_INT);
 
 PacketData sensorData;
 
@@ -66,8 +66,8 @@ void setup() {
   delay(500);
 
   //Begin LoRa communication
-  pinMode(RFM95_RST, OUTPUT);
-  digitalWrite(RFM95_RST, HIGH);
+  pinMode(PIN_RFM95_RST, OUTPUT);
+  digitalWrite(PIN_RFM95_RST, HIGH);
 
   Serial.begin(9600);
   //while (!Serial);
@@ -75,7 +75,7 @@ void setup() {
 
   Serial.println("RID Y.20 LoRa Link");
 
-  if(radioinit(rf95)) {
+  if(radioInit(rf95)) {
 	Serial.println("Radio init successful.");
   }
 
@@ -169,8 +169,8 @@ void sendWaterLeveltoLoRa(uint16_t level,
   sensorData.water_temp = water_temp;
   sensorData.voltage = voltage;
 
-  Serial.print("Header Field: ");
-  Serial.println(sensorData.header.type);
+  //Serial.print("Header Field: ");
+  //Serial.println(sensorData.header.type);
   
   Serial.print("Sending Water Level: ");
   Serial.println(sensorData.level);
