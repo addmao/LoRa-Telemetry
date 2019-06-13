@@ -114,7 +114,7 @@ PT_THREAD(taskRadio(struct pt* pt)) {
     
     if (rf95.recv(buf,&len)) {
       PacketHeader* header = (PacketHeader*)buf;
-      if (header == PACKET_TYPE_DATA && len == sizeof(PacketData)) {
+      if (header->type == PACKET_TYPE_DATA && len == sizeof(PacketData)) {
         DEBUG_PRINTLN("Radio data received.");
         memcpy(&packetData,buf,len);
         SHORT_BLINK(50,100);
