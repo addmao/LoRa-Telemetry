@@ -11,6 +11,10 @@ struct PacketHeader {
 struct PacketConfig {
   PacketHeader hdr;
   uint16_t     interval;
+
+  PacketConfig() {
+    hdr.type = PACKET_TYPE_CONFIG;
+  };
 } __attribute__((packed));
 
 struct PacketData {
@@ -20,6 +24,10 @@ struct PacketData {
   uint16_t humidity;
   uint16_t water_temp;
   uint16_t voltage;
+
+  PacketData() {
+    hdr.type = PACKET_TYPE_DATA;
+  };
 } __attribute__((packed));
 
 #endif
