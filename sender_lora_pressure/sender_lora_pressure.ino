@@ -9,42 +9,9 @@
 #include <DHT_U.h>
 #include <string.h>
 
-#include "report.h"
-
-//BEGIN RADIO PART
-/* for feather32u4 */
-#define RFM95_CS 8
-#define RFM95_RST 4
-#define RFM95_INT 7
-
-#if defined(ESP8266)
-/* for ESP w/featherwing */
-#define RFM95_CS  2    // "E"
-#define RFM95_RST 16   // "D"
-#define RFM95_INT 15   // "B"
-
-#elif defined(ESP32)
-/* ESP32 feather w/wing */
-#define RFM95_RST     27   // "A"
-#define RFM95_CS      33   // "B"
-#define RFM95_INT     12   //  next to A
-
-#elif defined(NRF52)
-/* nRF52832 feather w/wing */
-#define RFM95_RST     7   // "A"
-#define RFM95_CS      11   // "B"
-#define RFM95_INT     31   // "C"
-
-#elif defined(TEENSYDUINO)
-/* Teensy 3.x w/wing */
-#define RFM95_RST     9   // "A"
-#define RFM95_CS      10   // "B"
-#define RFM95_INT     4    // "C"
-#endif
-
-// Change to 434.0 or other frequency, must match RX's freq!
-#define RF95_FREQ 434.0
-//END RADIO PART
+#include "pins.h"
+#include "radio.h"
+#include "packets.h"
 
 //SDI12 definition
 #define SERIAL_BAUD 9600   // The baud rate for the output serial port
@@ -64,16 +31,22 @@ SDI12 sdi12Con(DATA_PIN);
 DHT dht(DHTPIN, DHTTYPE);
 
 // Singleton instance of the radio driver
-RH_RF95 rf95(RFM95_CS, RFM95_INT);
 
-struct dataStruct {
-  uint16_t checkingField; //MAGIC FIELD
-  uint16_t level;
-  uint16_t air_temp;
-  uint16_t humidity;
-  uint16_t water_temp;
-  uint16_t voltage;
-} sensorData;
+RH_RF95 rf95(PIN_RFM95_CS, PIN_RFM95_INT);
+
+PacketData sensorData;
+
+//struct dataStruct {
+  //uint16_t checkingField; //MAGIC FIELD
+  //uint16_t level;
+  //uint16_t air_temp;
+  //uint16_t humidity;
+  //uint16_t water_temp;
+  //uint16_t voltage;
+//} sensorData;
+
+
+
 
 byte sender_data[sizeof(sensorData)] = {0};
 
@@ -93,8 +66,8 @@ void setup() {
   delay(500);
 
   //Begin LoRa communication
-  pinMode(RFM95_RST, OUTPUT);
-  digitalWrite(RFM95_RST, HIGH);
+  pinMode(PIN_RFM95_RST, OUTPUT);
+  digitalWrite(PIN_RFM95_RST, HIGH);
 
   Serial.begin(9600);
   //while (!Serial);
@@ -102,41 +75,13 @@ void setup() {
 
   Serial.println("RID Y.20 LoRa Link");
 
-  // manual reset
-  digitalWrite(RFM95_RST, LOW);
-  delay(10);
-  digitalWrite(RFM95_RST, HIGH);
-  delay(10);
-
-  while (!rf95.init()) {
-    Serial.println("LoRa radio init failed");
-    while (1);
+  if(radioInit(rf95)) {
+	Serial.println("Radio init successful.");
   }
 
-  Serial.println("LoRa radio init OK!");
-  
-  if (!rf95.setFrequency(RF95_FREQ)) {
-    Serial.println("setFrequency failed");
-    while (1);
+  else {
+  	Serial.println("Radio init failed.");
   }
-
-  Serial.print("Set Freq to: "); Serial.println(RF95_FREQ);
-
-  // Defaults after init are 434.0MHz, 13dBm, Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on
-  // The default transmitter power is 13dBm, using PA_BOOST.
-  // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
-  // you can set transmitter powers from 5 to 23 dBm:
-  rf95.setTxPower(23, false);
-    RH_RF95::ModemConfig modem_config = {
-      // See Table 86 for LoRa for more info
-      0x78, // Reg 0x1D: BW=125kHz, Coding=4/8, Header=explicit
-      0xc4, // Reg 0x1E: Spread=4096chips/symbol, CRC=enable
-      0x0c  // Reg 0x26: Mobile=On, Agc=On
-    };
-  rf95.setModemRegisters(&modem_config);
-
-  //rf95.setModemConfig(RH_RF95::Bw31_25Cr48Sf512);
-  Serial.begin(SERIAL_BAUD);
   pinMode(LED_BUILTIN, OUTPUT);
   Watchdog.enable(WATCHDOG_TIMEOUT);
 }
@@ -217,15 +162,15 @@ void looptest() {
 void sendWaterLeveltoLoRa(uint16_t level, 
                           uint16_t water_temp,
                           uint16_t voltage) {
-  sensorData.checkingField = 100;
+  //sensorData.header.type = 100;
   sensorData.level = level;
   sensorData.air_temp = dht.readTemperature()*1000;
   sensorData.humidity = dht.readHumidity()*1000;
   sensorData.water_temp = water_temp;
   sensorData.voltage = voltage;
 
-  Serial.print("Checking Field: ");
-  Serial.println(sensorData.checkingField);
+  //Serial.print("Header Field: ");
+  //Serial.println(sensorData.header.type);
   
   Serial.print("Sending Water Level: ");
   Serial.println(sensorData.level);
