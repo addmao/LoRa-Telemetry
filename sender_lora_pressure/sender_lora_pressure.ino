@@ -45,9 +45,6 @@ PacketData sensorData;
   //uint16_t voltage;
 //} sensorData;
 
-
-
-
 byte sender_data[sizeof(sensorData)] = {0};
 
 void setup() {
@@ -88,8 +85,9 @@ void setup() {
 
 void loop() {
   sendWaterLeveltoLoRa(500, 24, 13);
-  delay(10000);
-  Watchdog.reset();
+  uint32_t ts = millis();
+  while(millis() - ts < 10000)
+    Watchdog.reset();
 }
 
 uint8_t sdi12read(const char* command, char *response) {
