@@ -23,6 +23,7 @@
 #define DHTTYPE DHT22
 
 #define WATCHDOG_TIMEOUT  (10*1000)
+#define DEFAULT_COLLECT_INTERVAL 10  // secs
 
 // Define the SDI-12 bus
 SDI12 sdi12Con(DATA_PIN);
@@ -36,16 +37,8 @@ RH_RF95 rf95(PIN_RFM95_CS, PIN_RFM95_INT);
 
 PacketData sensorData;
 
-//struct dataStruct {
-  //uint16_t checkingField; //MAGIC FIELD
-  //uint16_t level;
-  //uint16_t air_temp;
-  //uint16_t humidity;
-  //uint16_t water_temp;
-  //uint16_t voltage;
-//} sensorData;
-
 byte sender_data[sizeof(sensorData)] = {0};
+uint16_t collect_interval = DEFAULT_COLLECT_INTERVAL;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -86,8 +79,33 @@ void setup() {
 void loop() {
   sendWaterLeveltoLoRa(500, 24, 13);
   uint32_t ts = millis();
-  while(millis() - ts < 10000)
+  while(millis() - ts < collect_interval*1000) {
+    uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
+    uint8_t len = sizeof(buf);
+
     Watchdog.reset();
+    if (!rf95.available())
+      continue;
+      
+    if (!rf95.recv(buf,&len))
+      continue;
+
+    // a radio packet has been received; process it
+    PacketHeader* header = (PacketHeader*)buf;
+    if (header->type == PACKET_TYPE_CONFIG && len == sizeof(PacketConfig)) {
+      PacketConfig *config = (PacketConfig*)buf;
+      Serial.print("Receive config packet with interval = ");
+      Serial.println(config->interval);
+      // make sure the configured interval is in the valid range
+      if (config->interval >= 10 && config->interval <= 5*60) {
+        collect_interval = config->interval;
+        Serial.println("New collect interval updated");
+      }
+      else {
+        Serial.println("Interval value out of range; ignore");
+      }
+    }
+  }
 }
 
 uint8_t sdi12read(const char* command, char *response) {
@@ -116,6 +134,7 @@ float extractFirst(char* response) {
       break;
     else if (c == 0)
       return NAN;
+    Watchdog.reset();
   }
   p = response + i;
 
@@ -127,6 +146,7 @@ float extractFirst(char* response) {
       break;
     }
     i++;
+    Watchdog.reset();
   }
   return atof(p);
 }
