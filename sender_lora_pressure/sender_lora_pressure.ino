@@ -182,8 +182,8 @@ void sendWaterLeveltoLoRa(uint16_t level,
                           uint16_t voltage) {
   //sensorData.header.type = 100;
   sensorData.level = level;
-  sensorData.air_temp = dht.readTemperature()*1000;
-  sensorData.humidity = dht.readHumidity()*1000;
+  sensorData.air_temp = dht.readTemperature()*100;
+  sensorData.humidity = dht.readHumidity()*100;
   sensorData.water_temp = water_temp;
   sensorData.voltage = voltage;
 
