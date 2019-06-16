@@ -134,7 +134,6 @@ float extractFirst(char* response) {
       break;
     else if (c == 0)
       return NAN;
-    Watchdog.reset();
   }
   p = response + i;
 
@@ -146,7 +145,6 @@ float extractFirst(char* response) {
       break;
     }
     i++;
-    Watchdog.reset();
   }
   return atof(p);
 }
