@@ -106,20 +106,19 @@ void loop() {
   Serial.println("SDI12: read measurement");
   len = sdi12read("0D0!",response);
   if (len > 1) {
-    char* p = response;
     Serial.print("SDI12: response ");
     Serial.println(response);
-    p = extractField(p, field, sizeof(field)); // address
-    p = extractField(p, field, sizeof(field)); // water level
-    sensorData.level = atof(field);
-    p = extractField(p, field, sizeof(field)); // water temperature
-    sensorData.water_temp = atof(field);
-    p = extractField(p, field, sizeof(field)); // voltage
-    sensorData.voltage = atof(field);
+    char* p = response + 1; // skip the address field
+    p = extractField(p,field,sizeof(field),true); // water level
+    sensorData.level = atoi(field);
+    p = extractField(p,field,sizeof(field),true); // water temperature
+    sensorData.water_temp = atoi(field);
+    p = extractField(p,field,sizeof(field),true); // voltage
+    sensorData.voltage = atoi(field);
 
     // obtain air temperature and humidity from DHT-22
-    sensorData.air_temp = dht.readTemperature()*100;
-    sensorData.humidity = dht.readHumidity()*100;
+    sensorData.air_temp = (uint16_t)(dht.readTemperature()*100);
+    sensorData.humidity = (uint16_t)(dht.readHumidity()*100);
 
     sendToLoRa(sensorData);
   }
@@ -181,11 +180,15 @@ uint8_t sdi12read(const char* command, char *response) {
  * Extract a value field from SDI-12 response.
  * The result is kept in result and pointer to the next field is returned.
  * The len value indicates the maximum length of the result buffer, including
- * the terminating null.
+ * the terminating null.  If ignore_point is true, all decimal points are
+ * ignored, which makes the behavior similar to Unidata's loggers.  (Refer to
+ * the section SDI: SDI Transducer in the Unidata's manual.)
  */
-char* extractField(char* response, char* result, uint8_t len) {
+char* extractField(char* response, char* result, uint8_t len, bool ignore_point) {
   uint8_t n = 0;
   while (*response && n < len-1) {
+    if (ignore_point && *response == '.')
+      response++;
     *result++ = *response++;
     n++;
     if (*response == '+' || *response == '-')
