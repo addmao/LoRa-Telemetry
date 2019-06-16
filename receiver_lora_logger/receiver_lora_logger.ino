@@ -20,15 +20,19 @@
 #define DEBUG_PRINTLN(x...)
 #endif
 
-#define SDI12_ADDR     "0"
-#define SDI12_DELAY    2
-#define SDI12_NUM_RESP 3
+#define SDI12_WATER_ADDR    "0"
+#define SDI12_WATER_DELAY    2
+#define SDI12_WATER_NUM_RESP 3
+
+#define SDI12_DHT_ADDR    "1"
+#define SDI12_DHT_DELAY    1
+#define SDI12_DHT_NUM_RESP 3
 
 #define SHORT_BLINK(on,off) \
         do { \
-          digitalWrite(LED_BUILTIN,HIGH); \
+          digitalWrite(PIN_LED,HIGH); \
           delay(on); \
-          digitalWrite(LED_BUILTIN,LOW); \
+          digitalWrite(PIN_LED,LOW); \
           delay(off); \
         } while (0);
 
@@ -39,6 +43,7 @@
 RH_RF95 rf95(PIN_RFM95_CS,PIN_RFM95_INT);
 SDI12 sdi12Con(PIN_DATA);
 PacketData packetData;
+int16_t lastRssi;
 bool data_available;
 uint32_t lastReceived;
 struct pt ptRadio;
@@ -59,11 +64,13 @@ void setup()
 {
   pinMode(PIN_LED,OUTPUT);
   pinMode(PIN_RFM95_RST,INPUT);
+  delay(1000);
+  digitalWrite(PIN_LED,HIGH);
 
 #ifdef DEBUG
   Serial.begin(9600);
-  while (!Serial)
-    ;
+  //while (!Serial)
+  //  ;
   DEBUG_PRINTLN(F("receiver starting up..."));
 #endif
 
@@ -89,6 +96,7 @@ void setup()
   PT_INIT(&ptTimer);
 
   Watchdog.enable(WATCHDOG_TIMEOUT);
+  digitalWrite(PIN_LED,LOW);
 }
 
 /*****************************************/
@@ -121,6 +129,14 @@ PT_THREAD(taskRadio(struct pt* pt)) {
         SHORT_BLINK(50,0);
         lastReceived = millis();
         data_available = true;
+        lastRssi = rf95.lastRssi();
+      }
+      else {
+        DEBUG_PRINT("Unknown radio packet type ");
+        DEBUG_PRINT(header->type);
+        DEBUG_PRINT(" and len ");
+        DEBUG_PRINT(len);
+        DEBUG_PRINTLN("; ignore.");
       }
     }
   }
@@ -164,9 +180,9 @@ PT_THREAD(taskSdi(struct pt* pt)) {
     }
 
     // XXX for testing
-    //packetData.level = 1856;
-    //packetData.voltage = 124;
-    //packetData.water_temp = 123;
+    // packetData.level = 1856;
+    // packetData.voltage = 124;
+    // packetData.water_temp = 283;
     //
     // Water level displayed on StarLogV4:
     // 756 -> -30.401
@@ -174,24 +190,46 @@ PT_THREAD(taskSdi(struct pt* pt)) {
     // 1800 -> 26.217
     // 1856 -> -28.309
 
-    if (!strcmp(sdibuf,SDI12_ADDR "M")) {
-      sprintf(response,SDI12_ADDR "%03d%d\r\n",
-        SDI12_DELAY,
-        SDI12_NUM_RESP);
-      // addr => 0, measure time => 2, num responses => 3
+    if (!strcmp(sdibuf,SDI12_WATER_ADDR "M")) {
+      sprintf(response,SDI12_WATER_ADDR "%03d%d\r\n",
+        SDI12_WATER_DELAY,
+        SDI12_WATER_NUM_RESP);
       DEBUG_PRINT("Sending response: ");
       DEBUG_PRINTLN(response);
       sdi12Con.sendResponse(response);
       SHORT_BLINK(50,0);
     }
-    else if (!strcmp(sdibuf,SDI12_ADDR "D0")) {
-      sprintf(response,SDI12_ADDR "+%d.%03d+%d.%d+%d.%d\r\n",
+    else if (!strcmp(sdibuf,SDI12_WATER_ADDR "D0")) {
+      sprintf(response,SDI12_WATER_ADDR "+%d.%03d+%d.%02d+%d.%02d\r\n",
         packetData.level/1000,
         packetData.level%1000,
-        packetData.water_temp/10,
-        packetData.water_temp%10,
-        packetData.voltage/10,
-        packetData.voltage%10);
+        packetData.water_temp/100,
+        packetData.water_temp%100,
+        packetData.voltage/100,
+        packetData.voltage%100);
+      DEBUG_PRINT("Sending response: ");
+      DEBUG_PRINTLN(response);
+      sdi12Con.sendResponse(response);
+      SHORT_BLINK(50,0);
+    }
+
+    else if (!strcmp(sdibuf,SDI12_DHT_ADDR "M")) {
+      sprintf(response,SDI12_DHT_ADDR "%03d%d\r\n",
+        SDI12_DHT_DELAY,
+        SDI12_DHT_NUM_RESP);
+      DEBUG_PRINT("Sending response: ");
+      DEBUG_PRINTLN(response);
+      sdi12Con.sendResponse(response);
+      SHORT_BLINK(50,0);
+    }
+    else if (!strcmp(sdibuf,SDI12_DHT_ADDR "D0")) {
+      sprintf(response,SDI12_DHT_ADDR "+%d.%02d+%d.%02d%c%d\r\n",
+        packetData.air_temp/100,
+        packetData.air_temp%100,
+        packetData.humidity/100,
+        packetData.humidity%100,
+        lastRssi < 0 ? '-' : '+',
+        lastRssi);
       DEBUG_PRINT("Sending response: ");
       DEBUG_PRINTLN(response);
       sdi12Con.sendResponse(response);
