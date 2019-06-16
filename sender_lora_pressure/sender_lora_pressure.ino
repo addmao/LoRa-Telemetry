@@ -40,6 +40,9 @@ PacketData sensorData;
 byte sender_data[sizeof(sensorData)] = {0};
 uint16_t collect_interval = DEFAULT_COLLECT_INTERVAL;
 
+/****************************************************************************
+ *
+ */
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
@@ -76,8 +79,55 @@ void setup() {
   Watchdog.enable(WATCHDOG_TIMEOUT);
 }
 
+/****************************************************************************
+ *
+ */
 void loop() {
-  sendWaterLeveltoLoRa(500, 24, 13);
+  char response[128];
+  char field[10];
+  uint8_t len;
+
+  /////////////////////////////////////////////////////////////////
+  // read values from the SDI-12 probe and transmit over LoRa
+  /////////////////////////////////////////////////////////////////
+  Serial.println("SDI12: start measurement");
+  len = sdi12read("0M!",response);
+  if (len > 1) {
+    Serial.print("SDI12: response ");
+    Serial.println(response);
+  }
+
+  // ignore the returned measurement time for now and use a fixed 2-second
+  // delay
+  for (uint8_t i=0; i<2; i++) {
+    delay(1000);
+    Watchdog.reset();
+  }
+  Serial.println("SDI12: read measurement");
+  len = sdi12read("0D0!",response);
+  if (len > 1) {
+    char* p = response;
+    Serial.print("SDI12: response ");
+    Serial.println(response);
+    p = extractField(p, field, sizeof(field)); // address
+    p = extractField(p, field, sizeof(field)); // water level
+    sensorData.level = atof(field);
+    p = extractField(p, field, sizeof(field)); // water temperature
+    sensorData.water_temp = atof(field);
+    p = extractField(p, field, sizeof(field)); // voltage
+    sensorData.voltage = atof(field);
+
+    // obtain air temperature and humidity from DHT-22
+    sensorData.air_temp = dht.readTemperature()*100;
+    sensorData.humidity = dht.readHumidity()*100;
+
+    sendToLoRa(sensorData);
+  }
+
+  /////////////////////////////////////////////////////////////////
+  // wait for collect_interval seconds before the next measurement
+  // and keep checking radio for config packet while waiting
+  /////////////////////////////////////////////////////////////////
   uint32_t ts = millis();
   while(millis() - ts < collect_interval*1000) {
     uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
@@ -108,6 +158,10 @@ void loop() {
   }
 }
 
+/****************************************************************************
+ * Issue a command to SDI-12 sensor and stores the response in the given
+ * buffer
+ */
 uint8_t sdi12read(const char* command, char *response) {
   uint8_t index = 0;
   sdi12Con.sendCommand(command);
@@ -123,85 +177,45 @@ uint8_t sdi12read(const char* command, char *response) {
   return index;
 }
 
-float extractFirst(char* response) {
-  // find the first + or -. If not found, return 0
-  uint8_t i = 0;
-  char *p;
-
-  while (1) {
-    char c = response[i++];
-    if ((c == '+') || (c == '-'))
+/****************************************************************************
+ * Extract a value field from SDI-12 response.
+ * The result is kept in result and pointer to the next field is returned.
+ * The len value indicates the maximum length of the result buffer, including
+ * the terminating null.
+ */
+char* extractField(char* response, char* result, uint8_t len) {
+  uint8_t n = 0;
+  while (*response && n < len-1) {
+    *result++ = *response++;
+    n++;
+    if (*response == '+' || *response == '-')
       break;
-    else if (c == 0)
-      return NAN;
   }
-  p = response + i;
-
-  // find the next + or - or the end of string
-  while (1) {
-    char c = response[i];
-    if ((c == '+') || (c == '-') || (c == 0)) {
-      response[i] = 0;
-      break;
-    }
-    i++;
-  }
-  return atof(p);
+  *result = 0;
+  return response;
 }
 
-void looptest() {
-  char response[128];
-  uint8_t len;
-
-  Serial.println("SDI12: start measurement");
-  len = sdi12read("0M!",response);
-  if (len > 1) {
-    Serial.print("SDI12: response ");
-    Serial.println(response);
-  }
-
-  delay(2000);
-  Serial.println("SDI12: read measurement");
-  len = sdi12read("0D0!",response);
-  if (len > 1) {
-    Serial.print("SDI12: response ");
-    Serial.println(response);
-    Serial.print("Extracted value: ");
-    float value = extractFirst(response);
-    Serial.println(value,4);
-    //sendWaterLeveltoLoRa((int)round(value*1000));
-  }
-
-  delay(10000);
-}
-
-void sendWaterLeveltoLoRa(uint16_t level, 
-                          uint16_t water_temp,
-                          uint16_t voltage) {
-  //sensorData.header.type = 100;
-  sensorData.level = level;
-  sensorData.air_temp = dht.readTemperature()*100;
-  sensorData.humidity = dht.readHumidity()*100;
-  sensorData.water_temp = water_temp;
-  sensorData.voltage = voltage;
-
+/****************************************************************************
+ * Send 
+ */
+void sendToLoRa(PacketData& data) {
   //Serial.print("Header Field: ");
   //Serial.println(sensorData.header.type);
   
   Serial.print("Sending Water Level: ");
-  Serial.println(sensorData.level);
+  Serial.println(data.level);
   Serial.print("Sending Water Temperature: ");
-  Serial.println(sensorData.water_temp);
+  Serial.println(data.water_temp);
   Serial.print("Sending Air Temperature: ");
-  Serial.print(sensorData.air_temp);
+  Serial.print(data.air_temp);
   Serial.print("Sending Air Humidity: ");
-  Serial.print(sensorData.humidity);
+  Serial.print(data.humidity);
   Serial.print("Sending Voltage Probe: ");
-  Serial.println(sensorData.voltage);
+  Serial.println(data.voltage);
 
   digitalWrite(LED_BUILTIN, HIGH);
   delay(50);
   digitalWrite(LED_BUILTIN, LOW);
 
-  rf95.send((uint8_t*)&sensorData, sizeof(sensorData));
+  rf95.send((uint8_t*)&data, sizeof(PacketData));
 }
