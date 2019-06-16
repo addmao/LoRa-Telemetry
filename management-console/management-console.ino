@@ -76,17 +76,17 @@ void loop() {
         PacketData* data = (PacketData*) buf;
         printf(Serial,F("\r\n"));
         printf(Serial,F("* RX: DATA (RSSI = %d dBm)\r\n"), rf95.lastRssi());
-        printf(Serial,F("*  level = %d\r\n"), data->level);
-        printf(Serial,F("*  air_temp = %d\r\n"), data->air_temp);
-        printf(Serial,F("*  humidity = %d\r\n"), data->humidity);
-        printf(Serial,F("*  water_temp = %d\r\n"), data->water_temp);
-        printf(Serial,F("*  voltage = %d\r\n"), data->voltage);
+        printf(Serial,F("  level = %d.%03d m\r\n"), data->level/1000,data->level%1000);
+        printf(Serial,F("  air_temp = %d.%02d degC\r\n"), data->air_temp/100,data->air_temp%100);
+        printf(Serial,F("  humidity = %d.%02d %%\r\n"), data->humidity/100,data->humidity%100);
+        printf(Serial,F("  water_temp = %d.%02d degC\r\n"), data->water_temp/100,data->water_temp%100);
+        printf(Serial,F("  voltage = %d.%02d V\r\n"), data->voltage/100,data->voltage%100);
       }
       else {
         printf(Serial,F("\r\n"));
         printf(Serial,F("* RX: Unknown (RSSI = %d dBm)\r\n"), rf95.lastRssi());
-        printf(Serial,F("*  type = %d\r\n"), header->type);
-        printf(Serial,F("*  len = %d\r\n"), len);
+        printf(Serial,F("  type = %d\r\n"), header->type);
+        printf(Serial,F("  len = %d\r\n"), len);
       }
     }
   }
