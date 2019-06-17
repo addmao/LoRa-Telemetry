@@ -1,7 +1,12 @@
 <mk-box header="Graph" [isCollapsable]="false" [isRemovable]="false"
       contentStyleClass="table-responsive">
         <mk-box-content class="box-height">
-            <app-bar-env [data]=data *ngIf=!isLoading></app-bar-env>
             <app-bar-water [data]=data *ngIf=!isLoading></app-bar-water>
+        </mk-box-content>
+    </mk-box>
+<mk-box header="Graph" [isCollapsable]="false" [isRemovable]="false"
+      contentStyleClass="table-responsive">
+        <mk-box-content class="box-height">
+            <app-bar-env [data]=data *ngIf=!isLoading></app-bar-env>
         </mk-box-content>
     </mk-box>

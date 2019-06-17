@@ -44,6 +44,12 @@ export class BarComponentEnv implements OnInit, OnChanges {
                 data: this.data['xaxis'],
                 axisPointer: {
                     type: 'shadow'
+                },
+                axisLabel: {
+                    formatter: function(value) {
+                        var dt = new Date(value);
+                        return dt.toLocaleString();
+                    }
                 }
             }
         ],
@@ -132,6 +138,12 @@ export class BarComponentWater implements OnInit, OnChanges {
                 data: this.data['xaxis'],
                 axisPointer: {
                     type: 'shadow'
+                },
+                axisLabel: {
+                    formatter: function(value) {
+                        var dt = new Date(value);
+                        return dt.toLocaleString();
+                    }
                 }
             }
         ],
