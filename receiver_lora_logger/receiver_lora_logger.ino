@@ -10,7 +10,7 @@
 
 #define DEBUG
 #define WATCHDOG_TIMEOUT  (10*1000)   // msec
-#define DATA_TIMEOUT      (5*60*1000) // msec
+#define DATA_TIMEOUT      (1L*60*1000) // msec
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x...) Serial.print(x)
@@ -100,8 +100,7 @@ void setup()
 }
 
 /*****************************************/
-void loop()
-{ 
+void loop() { 
   taskRadio(&ptRadio);
   taskSdi(&ptSdi);
   taskTimer(&ptTimer);
