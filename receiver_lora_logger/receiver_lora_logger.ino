@@ -228,7 +228,7 @@ PT_THREAD(taskSdi(struct pt* pt)) {
         packetData.humidity/100,
         packetData.humidity%100,
         lastRssi < 0 ? '-' : '+',
-        lastRssi);
+        abs(lastRssi));
       DEBUG_PRINT("Sending response: ");
       DEBUG_PRINTLN(response);
       sdi12Con.sendResponse(response);
