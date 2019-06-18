@@ -10,7 +10,7 @@
 
 #define DEBUG
 #define WATCHDOG_TIMEOUT  (10*1000)   // msec
-#define DATA_TIMEOUT      (1L*60*1000) // msec
+#define DATA_TIMEOUT      (1U*60*1000) // msec
 
 #ifdef DEBUG
 #define DEBUG_PRINT(x...) Serial.print(x)
@@ -247,7 +247,6 @@ PT_THREAD(taskTimer(struct pt* pt)) {
   PT_BEGIN(pt);
 
   for (;;) {
-    // TODO: take care of wrap-around
     if (data_available && (uint32_t)(millis()-lastReceived) >= DATA_TIMEOUT) {
       DEBUG_PRINTLN("Radio reception timed out");
       data_available = false;
