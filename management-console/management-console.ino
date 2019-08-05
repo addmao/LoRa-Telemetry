@@ -79,8 +79,8 @@ void loop() {
         printf(Serial,F("  level = %d.%03d m\r\n"), data->level/1000,data->level%1000);
         printf(Serial,F("  air_temp = %d.%02d degC\r\n"), data->air_temp/100,data->air_temp%100);
         printf(Serial,F("  humidity = %d.%02d %%\r\n"), data->humidity/100,data->humidity%100);
-        printf(Serial,F("  water_temp = %d.%02d degC\r\n"), data->water_temp/100,data->water_temp%100);
-        printf(Serial,F("  voltage = %d.%02d V\r\n"), data->voltage/100,data->voltage%100);
+        printf(Serial,F("  water_temp = %d.%02d degC\r\n"), data->water_temp/10,data->water_temp%10);
+        printf(Serial,F("  voltage = %d.%02d V\r\n"), data->voltage/10,data->voltage%10);
       }
       else {
         printf(Serial,F("\r\n"));
